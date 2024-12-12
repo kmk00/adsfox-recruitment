@@ -1,4 +1,3 @@
-import { useState } from "react";
 import AddChanelForm from "./AddChanelForm";
 import ChannelsChart from "./ChannelsChart";
 import ChannelsList from "./ChannelsList";
@@ -10,6 +9,10 @@ const ChannelsSection = () => {
     queryFn: async () => {
       const response = await fetch("http://127.0.0.1:8000/api/channels");
       const data: ChannelInfo[] = await response.json();
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch channels");
+      }
       return data;
     },
   });

@@ -12,6 +12,6 @@ class Channels extends Model
 
     protected $fillable = [
         'name',
-        'usersCount',
+        'clientsCount',
     ];
 }

@@ -18,7 +18,7 @@ class ChannelsFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'usersCount' => fake()->numberBetween(0, 400),
+            'clientsCount' => fake()->numberBetween(0, 400),
         ];
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('channels', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('usersCount');
+            $table->integer('clientsCount');
             $table->timestamps();
         });
     }

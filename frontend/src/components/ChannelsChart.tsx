@@ -23,6 +23,10 @@ const ChannelsChart = ({ channelsData }: Props) => {
     return `(${percentage}%) ${entry.name}`;
   };
 
+  if (channelsData.length === 0) {
+    return <div>No channels</div>;
+  }
+
   return (
     <div>
       <ResponsiveContainer width="100%" height={300}>
