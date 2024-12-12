@@ -1,16 +1,34 @@
+import { useMutation } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-interface Props {}
+interface Props {
+  refetchChannels: () => void;
+}
 
-const AddChanelForm = ({}: Props) => {
+const AddChanelForm = ({ refetchChannels }: Props) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Channel>();
 
-  const onSubmit: SubmitHandler<Channel> = (data) => {
-    console.log(data);
+  const mutation = useMutation({
+    mutationFn: async (channel: Channel) => {
+      const response = await fetch("http://127.0.0.1:8000/api/channels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(channel),
+      });
+      const data: Channel = await response.json();
+      return data;
+    },
+    onSuccess: () => {
+      refetchChannels();
+    },
+  });
+
+  const onSubmit: SubmitHandler<Channel> = async (data) => {
+    mutation.mutate(data);
   };
 
   return (

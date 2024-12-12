@@ -4,7 +4,7 @@ import ChannelsList from "./ChannelsList";
 import { useQuery } from "@tanstack/react-query";
 
 const ChannelsSection = () => {
-  const { data, isLoading, error } = useQuery<ChannelInfo[]>({
+  const { data, isLoading, error, refetch } = useQuery<ChannelInfo[]>({
     queryKey: ["channels"],
     queryFn: async () => {
       const response = await fetch("http://127.0.0.1:8000/api/channels");
@@ -29,7 +29,7 @@ const ChannelsSection = () => {
     return (
       <div>
         <h1>No channels</h1>
-        <AddChanelForm />
+        <AddChanelForm refetchChannels={refetch} />
       </div>
     );
   }
@@ -37,7 +37,7 @@ const ChannelsSection = () => {
   return (
     <div>
       <ChannelsChart channelsData={data} />
-      <AddChanelForm />
+      <AddChanelForm refetchChannels={refetch} />
       <ChannelsList channelsData={data} />
     </div>
   );
