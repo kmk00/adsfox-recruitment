@@ -10,7 +10,7 @@ const ChannelsList = ({ channelsData }: Props) => {
       <thead>
         <tr>
           <th>Name</th>
-          <th>Users</th>
+          <th>Clients Count</th>
           <th>Actions</th>
         </tr>
       </thead>
