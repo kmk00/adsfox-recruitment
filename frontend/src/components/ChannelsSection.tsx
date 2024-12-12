@@ -38,7 +38,7 @@ const ChannelsSection = () => {
     <div>
       <ChannelsChart channelsData={data} />
       <AddChanelForm refetchChannels={refetch} />
-      <ChannelsList channelsData={data} />
+      <ChannelsList refetchChannels={refetch} channelsData={data} />
     </div>
   );
 };

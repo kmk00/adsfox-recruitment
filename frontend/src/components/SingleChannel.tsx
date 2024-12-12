@@ -1,19 +1,74 @@
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const SingleChannel = ({ name, clientsCount, id }: ChannelInfo) => {
+interface Props {
+  refetchChannels: () => void;
+  id: number;
+  name: string;
+  clientsCount: number;
+}
+
+type Inputs = {
+  newName: string;
+  newClientsCount: number;
+};
+
+const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const {
     register,
     formState: { errors },
-  } = useForm<Channel>();
+    reset,
+    getValues,
+  } = useForm<Inputs>();
 
-  const saveEditedChannel = () => {
-    setIsEditing(false);
+  const updateMutation = useMutation({
+    mutationFn: async (channel: Inputs) => {
+      const response = await fetch(`http://127.0.0.1:8000/api/channels/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: channel.newName,
+          clientsCount: channel.newClientsCount,
+        }),
+      });
+      const data: Channel = await response.json();
+      return data;
+    },
+    onSuccess: () => {
+      refetchChannels();
+      setIsEditing(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`http://127.0.0.1:8000/api/channels/${id}`, {
+        method: "DELETE",
+      });
+      const data: Channel = await response.json();
+      return data;
+    },
+    onSuccess: () => {
+      refetchChannels();
+    },
+  });
+
+  const handleSaveEditedChannel = () => {
+    updateMutation.mutate({
+      newName: getValues("newName"),
+      newClientsCount: getValues("newClientsCount"),
+    });
   };
 
-  const deleteChannel = () => {
+  const handleDeleteChannel = () => {
+    deleteMutation.mutate();
+  };
+
+  const handleCancelEdit = () => {
+    reset();
     setIsEditing(false);
   };
 
@@ -24,10 +79,10 @@ const SingleChannel = ({ name, clientsCount, id }: ChannelInfo) => {
           <input
             type="text"
             defaultValue={name}
-            {...register("name", { required: true, maxLength: 30 })}
+            {...register("newName", { required: true, maxLength: 30 })}
             className="input text-center input-bordered w-full max-w-xs"
           />
-          {errors.name && (
+          {errors.newName && (
             <span className="text-sm text-error">Name field is required</span>
           )}
         </td>
@@ -35,14 +90,14 @@ const SingleChannel = ({ name, clientsCount, id }: ChannelInfo) => {
           <input
             type="number"
             defaultValue={clientsCount}
-            {...register("clientsCount", {
+            {...register("newClientsCount", {
               required: true,
               valueAsNumber: true,
               min: 0,
             })}
             className="input text-center input-bordered w-full max-w-xs"
           />
-          {errors.clientsCount && (
+          {errors.newClientsCount && (
             <span className="text-error text-sm">
               Clients count field is required and must be greater or equal 0
             </span>
@@ -51,16 +106,16 @@ const SingleChannel = ({ name, clientsCount, id }: ChannelInfo) => {
         <td>
           <div className="flex gap-2 justify-center items-center">
             <button
-              onClick={saveEditedChannel}
+              onClick={handleSaveEditedChannel}
               className="btn btn-xs btn-success text-white"
             >
-              save
+              Save
             </button>
             <button
-              onClick={deleteChannel}
+              onClick={handleCancelEdit}
               className="btn btn-xs btn-error text-white"
             >
-              delete
+              Cancel
             </button>
           </div>
         </td>
@@ -73,12 +128,20 @@ const SingleChannel = ({ name, clientsCount, id }: ChannelInfo) => {
       <td>{name}</td>
       <td>{clientsCount}</td>
       <td>
-        <button
-          onClick={() => setIsEditing(true)}
-          className="btn btn-xs btn-secondary"
-        >
-          edit
-        </button>
+        <div className="flex gap-2 justify-center items-center">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="btn btn-xs btn-secondary"
+          >
+            Edit
+          </button>
+          <button
+            onClick={handleDeleteChannel}
+            className="btn btn-xs btn-error text-white"
+          >
+            Delete
+          </button>
+        </div>
       </td>
     </tr>
   );
