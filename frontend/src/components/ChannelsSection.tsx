@@ -2,51 +2,40 @@ import { useState } from "react";
 import AddChanelForm from "./AddChanelForm";
 import ChannelsChart from "./ChannelsChart";
 import ChannelsList from "./ChannelsList";
+import { useQuery } from "@tanstack/react-query";
 
 const ChannelsSection = () => {
-  const [channels] = useState<ChannelInfo[]>([
-    {
-      id: 1,
-      name: "Channel 1",
-      clientsCount: 10,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
+  const { data, isLoading, error } = useQuery<ChannelInfo[]>({
+    queryKey: ["channels"],
+    queryFn: async () => {
+      const response = await fetch("http://127.0.0.1:8000/api/channels");
+      const data: ChannelInfo[] = await response.json();
+      return data;
     },
-    {
-      id: 2,
-      name: "Channel 2",
-      clientsCount: 112,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 3,
-      name: "Channel 3",
-      clientsCount: 23,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 4,
-      name: "Channel 4",
-      clientsCount: 33,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 5,
-      name: "Channel 5",
-      clientsCount: 143,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-  ]);
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (!data) {
+    return (
+      <div>
+        <h1>No channels</h1>
+        <AddChanelForm />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <ChannelsChart channelsData={channels} />
+      <ChannelsChart channelsData={data} />
       <AddChanelForm />
-      <ChannelsList channelsData={channels} />
+      <ChannelsList channelsData={data} />
     </div>
   );
 };
