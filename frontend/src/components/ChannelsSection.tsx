@@ -44,7 +44,7 @@ const ChannelsSection = () => {
 
   return (
     <div>
-      <ChannelsChart />
+      <ChannelsChart channelsData={channels} />
       <AddChanelForm />
       <ChannelsList channelsData={channels} />
     </div>
