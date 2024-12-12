@@ -23,14 +23,14 @@ class ChannelsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required',
-            'users_count' => 'required',
+            'usersCount' => 'required',
         ]);
 
         // take the data from body and create a new channel
 
         $newChannel = new Channels();
         $newChannel->name = $request->name;
-        $newChannel->users_count = $request->users_count;
+        $newChannel->usersCount = $request->usersCount;
         $newChannel->save();
         
         return response()->json($newChannel);
@@ -44,8 +44,8 @@ class ChannelsController extends Controller
     {
 
         // new name or users_count required
-        if(!$request->name && !$request->users_count) {
-            return response()->json(['error' => 'name or users_count required'], 400);
+        if(!$request->name && !$request->usersCount) {
+            return response()->json(['error' => 'name or usersCount required'], 400);
         }
 
         // check if the channel exists
@@ -54,7 +54,7 @@ class ChannelsController extends Controller
         }
 
         $channel->name = $request->name;
-        $channel->users_count = $request->users_count;
+        $channel->usersCount = $request->usersCount;
         $channel->save();
         
         return response()->json($channel);

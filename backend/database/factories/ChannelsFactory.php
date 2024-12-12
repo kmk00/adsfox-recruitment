@@ -17,8 +17,8 @@ class ChannelsFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'users_count' => fake()->numberBetween(0, 100),
+            'name' => fake()->word(),
+            'usersCount' => fake()->numberBetween(0, 400),
         ];
     }
 }
