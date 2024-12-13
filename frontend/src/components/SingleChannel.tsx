@@ -36,6 +36,12 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
           clientsCount: channel.newClientsCount,
         }),
       });
+
+      if (!response.ok) {
+        const { error }: { error: string } = await response.json();
+        throw new Error(error);
+      }
+
       const data: Channel = await response.json();
       return data;
     },
@@ -44,8 +50,8 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
       refetchChannels();
       setIsEditing(false);
     },
-    onError: () => {
-      errorToast("Failed to update channel");
+    onError: (error) => {
+      errorToast(error.message);
     },
   });
 
@@ -67,6 +73,21 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
   });
 
   const handleSaveEditedChannel = () => {
+    const name = getValues("newName");
+    const clientsCount = getValues("newClientsCount");
+
+    if (name.trim() === "") {
+      return errorToast("Valid name field is required");
+    }
+
+    if (name.trim().length > 30) {
+      return errorToast("Name field is too long (30 symbols max)");
+    }
+
+    if (clientsCount < 0) {
+      return errorToast("Valid clients count field is required");
+    }
+
     updateMutation.mutate({
       newName: getValues("newName"),
       newClientsCount: getValues("newClientsCount"),
@@ -89,7 +110,11 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
           <input
             type="text"
             defaultValue={name}
-            {...register("newName", { required: true, maxLength: 30 })}
+            {...register("newName", {
+              required: true,
+              maxLength: 30,
+              setValueAs: (v) => v.trim(),
+            })}
             className="input text-center input-bordered w-full max-w-xs"
           />
           {errors.newName && (

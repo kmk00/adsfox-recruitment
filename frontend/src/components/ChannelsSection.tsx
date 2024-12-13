@@ -27,9 +27,7 @@ const ChannelsSection = () => {
   }
 
   if (error) {
-    return (
-      <div className="text-center font-bold">Ups... Something went wrong</div>
-    );
+    return <div className="text-center font-bold">Error: {error.message}</div>;
   }
 
   if (!data || data.length === 0) {

@@ -22,11 +22,17 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(channel),
       });
+
+      if (!response.ok) {
+        const { error }: { error: string } = await response.json();
+        throw new Error(error);
+      }
       const data: Channel = await response.json();
+
       return data;
     },
-    onError: () => {
-      errorToast("Failed to add channel");
+    onError: (error) => {
+      errorToast(error.message);
     },
     onSuccess: () => {
       refetchChannels();
@@ -47,7 +53,11 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
       <label className="input input-bordered flex items-center gap-2">
         Name:
         <input
-          {...register("name", { required: true, maxLength: 30 })}
+          {...register("name", {
+            required: true,
+            maxLength: 30,
+            setValueAs: (v) => v.trim(),
+          })}
           name="name"
           type="text"
           className="grow"

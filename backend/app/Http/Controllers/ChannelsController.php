@@ -13,7 +13,13 @@ class ChannelsController extends Controller
      */
     public function index()
     {
-        return response()->json(Channels::all());
+        $channels = Channels::all();
+
+        if (!$channels) {
+            return response()->json(['error' => 'Channels not found'], 404);
+        }
+
+        return response()->json($channels);
     }
 
     /**
@@ -26,7 +32,9 @@ class ChannelsController extends Controller
             'clientsCount' => 'required',
         ]);
 
-        // take the data from body and create a new channel
+        if (Channels::where('name', $request->name)->exists()) {
+            return response()->json(['error' => 'Channel already exists'], 400);
+        }
 
         $newChannel = new Channels();
         $newChannel->name = $request->name;
@@ -44,8 +52,12 @@ class ChannelsController extends Controller
     {
 
         // new name or users_count required
-        if(!$request->name && !$request->clientsCount) {
-            return response()->json(['error' => 'name or clientsCount required'], 400);
+        if(!$request->name) {
+            return response()->json(['error' => 'name required'], 400);
+        }
+
+        if(!$request->clientsCount) {
+            return response()->json(['error' => 'clientsCount required'], 400);
         }
 
         // check if the channel exists
@@ -65,6 +77,11 @@ class ChannelsController extends Controller
      */
     public function destroy(Channels $channel)
     {
+
+        if (!$channel) {
+            return response()->json(['error' => 'Channel not found'], 404);
+        }
+
         $channel->delete();
         return response()->json($channel);
     }
