@@ -2,19 +2,12 @@ import AddChanelForm from "./AddChanelForm";
 import ChannelsChart from "./ChannelsChart";
 import ChannelsList from "./ChannelsList";
 import { useQuery } from "@tanstack/react-query";
+import { fetchData } from "../api/fetchData";
 
 const ChannelsSection = () => {
   const { data, isLoading, error, refetch } = useQuery<ChannelInfo[]>({
     queryKey: ["channels"],
-    queryFn: async () => {
-      const response = await fetch("http://127.0.0.1:8000/api/channels");
-      const data: ChannelInfo[] = await response.json();
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch channels");
-      }
-      return data;
-    },
+    queryFn: () => fetchData(`${import.meta.env.VITE_API_URL}/channels`),
   });
 
   if (isLoading) {

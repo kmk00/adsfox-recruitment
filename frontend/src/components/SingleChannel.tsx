@@ -2,6 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { errorToast, successToast } from "../utils/toasts";
+import { updateData } from "../api/updateData";
+import { deleteData } from "../api/deleteData";
 
 interface Props {
   refetchChannels: () => void;
@@ -15,7 +17,6 @@ type Inputs = {
   newClientsCount: number;
 };
 
-//TODO: add mutation in separate folder (functions for update and delete)
 const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -27,24 +28,12 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
   } = useForm<Inputs>();
 
   const updateMutation = useMutation({
-    mutationFn: async (channel: Inputs) => {
-      const response = await fetch(`http://127.0.0.1:8000/api/channels/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: channel.newName,
-          clientsCount: channel.newClientsCount,
-        }),
-      });
+    mutationFn: () =>
+      updateData<Channel>(`${import.meta.env.VITE_API_URL}/channels/${id}`, {
+        name: getValues("newName"),
+        clientsCount: getValues("newClientsCount"),
+      }),
 
-      if (!response.ok) {
-        const { error }: { error: string } = await response.json();
-        throw new Error(error);
-      }
-
-      const data: Channel = await response.json();
-      return data;
-    },
     onSuccess: () => {
       successToast("Channel updated");
       refetchChannels();
@@ -56,13 +45,8 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`http://127.0.0.1:8000/api/channels/${id}`, {
-        method: "DELETE",
-      });
-      const data: Channel = await response.json();
-      return data;
-    },
+    mutationFn: () =>
+      deleteData(`${import.meta.env.VITE_API_URL}/channels/${id}`),
     onSuccess: () => {
       successToast("Channel deleted");
       refetchChannels();
@@ -88,10 +72,7 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
       return errorToast("Valid clients count field is required");
     }
 
-    updateMutation.mutate({
-      newName: getValues("newName"),
-      newClientsCount: getValues("newClientsCount"),
-    });
+    updateMutation.mutate();
   };
 
   const handleDeleteChannel = () => {

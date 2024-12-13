@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { errorToast, successToast } from "../utils/toasts";
+import { createData } from "../api/createData";
 
 interface Props {
   refetchChannels: () => void;
@@ -12,24 +13,20 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
     handleSubmit,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<Channel>();
 
-  // TODO: Mutation in separate folder
-  const mutation = useMutation({
-    mutationFn: async (channel: Channel) => {
-      const response = await fetch("http://127.0.0.1:8000/api/channels", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(channel),
-      });
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => {
+      const body = {
+        name: getValues("name"),
+        clientsCount: getValues("clientsCount"),
+      };
 
-      if (!response.ok) {
-        const { error }: { error: string } = await response.json();
-        throw new Error(error);
-      }
-      const data: Channel = await response.json();
-
-      return data;
+      return createData<Channel>(
+        `${import.meta.env.VITE_API_URL}/channels`,
+        body
+      );
     },
     onError: (error) => {
       errorToast(error.message);
@@ -41,8 +38,8 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Channel> = async (data) => {
-    mutation.mutate(data);
+  const onSubmit: SubmitHandler<Channel> = async () => {
+    mutate();
   };
 
   return (
@@ -87,7 +84,7 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
         </span>
       )}
       <input
-        disabled={mutation.isPending}
+        disabled={isPending}
         type="submit"
         className="btn btn-primary"
         value="Add New Channel"

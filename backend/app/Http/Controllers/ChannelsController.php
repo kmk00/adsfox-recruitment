@@ -27,7 +27,7 @@ class ChannelsController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required',
             'clientsCount' => 'required',
         ]);
@@ -51,18 +51,24 @@ class ChannelsController extends Controller
     public function update(Request $request, Channels $channel)
     {
 
-        // new name or users_count required
-        if(!$request->name) {
-            return response()->json(['error' => 'name required'], 400);
-        }
+       $request->validate([
+           'name' => 'required',
+           'clientsCount' => 'required',
+       ]);
 
-        if(!$request->clientsCount) {
-            return response()->json(['error' => 'clientsCount required'], 400);
-        }
-
-        // check if the channel exists
+        // check if the updating channel exists
         if (!$channel) {
             return response()->json(['error' => 'Channel not found'], 404);
+        }
+
+        // check if the channel with the same name already exists
+        if (Channels::where('name', $request->name)->exists()) {
+            return response()->json(['error' => 'Channel with the same name already exists'], 400);
+        }
+
+        // check if the clientsCount is greater than 0
+        if ($request->clientsCount <= 0) {
+            return response()->json(['error' => 'clientsCount must be greater than 0'], 400);
         }
 
         $channel->name = $request->name;
