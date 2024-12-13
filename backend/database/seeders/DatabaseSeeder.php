@@ -14,14 +14,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        Channels::factory()->create([
+            'name' => 'Google',
+            'clientsCount' => 725
         ]);
 
-        Channels::factory(7)->create();
+        Channels::factory()->create([
+            'name' => 'Facebook',
+            'clientsCount' => 225
+        ]);
+
+        Channels::factory()->create([
+            'name' => 'Instagram',
+            'clientsCount' => 15
+        ]);
+
+        Channels::factory()->create([
+            'name' => 'Twitter',
+            'clientsCount' => 30
+        ]);
+        
+        Channels::factory()->create([
+            'name' => 'LinkedIn',
+            'clientsCount' => 45
+        ]);
 
     }
 }
