@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { errorToast, successToast } from "../utils/toasts";
 
 interface Props {
   refetchChannels: () => void;
@@ -10,8 +11,10 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<Channel>();
 
+  // TODO: Mutation in separate folder
   const mutation = useMutation({
     mutationFn: async (channel: Channel) => {
       const response = await fetch("http://127.0.0.1:8000/api/channels", {
@@ -22,8 +25,13 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
       const data: Channel = await response.json();
       return data;
     },
+    onError: () => {
+      errorToast("Failed to add channel");
+    },
     onSuccess: () => {
       refetchChannels();
+      successToast("Channel added");
+      reset();
     },
   });
 
@@ -68,7 +76,12 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
           Clients count field is required and must be greater or equal 0
         </span>
       )}
-      <input type="submit" className="btn btn-primary"></input>
+      <input
+        disabled={mutation.isPending}
+        type="submit"
+        className="btn btn-primary"
+        value="Add New Channel"
+      ></input>
     </form>
   );
 };

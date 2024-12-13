@@ -18,17 +18,24 @@ const ChannelsSection = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-screen flex flex-col justify-center items-center gap-4">
+        <div className="w-4 h-4 bg-primary rounded-full animate-bounce" />
+        <p className="font-bold">Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div className="text-center font-bold">Ups... Something went wrong</div>
+    );
   }
 
-  if (!data) {
+  if (!data || data.length === 0) {
     return (
       <div>
-        <h1>No channels</h1>
+        <h1 className="text-2xl text-center">No channels</h1>
         <AddChanelForm refetchChannels={refetch} />
       </div>
     );

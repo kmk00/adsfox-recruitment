@@ -1,20 +1,18 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { getRandomColor } from "../utils/getRandomColor";
 
 interface Props {
   channelsData: ChannelInfo[];
 }
 
-const ChannelsChart = ({ channelsData }: Props) => {
-  const randomColor = () => {
-    let color = "#";
-    for (let i = 0; i < 3; i++) {
-      const value = Math.floor(Math.random() * 128);
-      color += value.toString(16).padStart(2, "0");
-    }
-    return color;
-  };
+type LabelProps = {
+  name: string;
+  clientsCount: number;
+  percent: number;
+};
 
-  const renderCustomLabel = (entry: any) => {
+const ChannelsChart = ({ channelsData }: Props) => {
+  const renderCustomLabel = (entry: LabelProps) => {
     const total = channelsData.reduce(
       (sum, channel) => sum + channel.clientsCount,
       0
@@ -24,7 +22,11 @@ const ChannelsChart = ({ channelsData }: Props) => {
   };
 
   if (channelsData.length === 0) {
-    return <div>No channels</div>;
+    return (
+      <div className="grid place-items-center text-balance">
+        Add channels to see the chart
+      </div>
+    );
   }
 
   return (
@@ -38,12 +40,12 @@ const ChannelsChart = ({ channelsData }: Props) => {
             cx="50%"
             cy="50%"
             outerRadius={80}
-            label={({ name, clientsCount, percent }) =>
+            label={({ name, clientsCount, percent }: LabelProps) =>
               renderCustomLabel({ name, clientsCount, percent })
             }
           >
             {channelsData.map((channel) => (
-              <Cell key={`cell-${channel.id}`} fill={randomColor()} />
+              <Cell key={`cell-${channel.id}`} fill={getRandomColor()} />
             ))}
           </Pie>
         </PieChart>
