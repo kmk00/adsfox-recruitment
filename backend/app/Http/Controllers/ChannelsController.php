@@ -61,8 +61,8 @@ class ChannelsController extends Controller
             return response()->json(['error' => 'Channel not found'], 404);
         }
 
-        // check if the channel with the same name already exists
-        if (Channels::where('name', $request->name)->exists()) {
+        // check if the different channel with the same name already exists
+        if ( Channels::where('name', $request->name)->where('id', '!=', $channel->id)->exists()) {
             return response()->json(['error' => 'Channel with the same name already exists'], 400);
         }
 

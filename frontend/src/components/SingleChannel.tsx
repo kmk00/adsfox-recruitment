@@ -2,8 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { errorToast, successToast } from "../utils/toasts";
-import { updateData } from "../api/updateData";
-import { deleteData } from "../api/deleteData";
+import { handleApi } from "../api/handleApi";
 
 interface Props {
   refetchChannels: () => void;
@@ -29,11 +28,14 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
 
   const updateMutation = useMutation({
     mutationFn: () =>
-      updateData<Channel>(`${import.meta.env.VITE_API_URL}/channels/${id}`, {
-        name: getValues("newName"),
-        clientsCount: getValues("newClientsCount"),
-      }),
-
+      handleApi<Channel>(
+        `${import.meta.env.VITE_API_URL}/channels/${id}`,
+        "PUT",
+        {
+          name: getValues("newName"),
+          clientsCount: getValues("newClientsCount"),
+        }
+      ),
     onSuccess: () => {
       successToast("Channel updated");
       refetchChannels();
@@ -46,7 +48,7 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
 
   const deleteMutation = useMutation({
     mutationFn: () =>
-      deleteData(`${import.meta.env.VITE_API_URL}/channels/${id}`),
+      handleApi(`${import.meta.env.VITE_API_URL}/channels/${id}`, "DELETE"),
     onSuccess: () => {
       successToast("Channel deleted");
       refetchChannels();

@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { errorToast, successToast } from "../utils/toasts";
-import { createData } from "../api/createData";
+import { handleApi } from "../api/handleApi";
 
 interface Props {
   refetchChannels: () => void;
@@ -23,8 +23,9 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
         clientsCount: getValues("clientsCount"),
       };
 
-      return createData<Channel>(
+      return handleApi<Channel>(
         `${import.meta.env.VITE_API_URL}/channels`,
+        "POST",
         body
       );
     },
