@@ -1,16 +1,13 @@
+import { ApiResponse } from "../types";
+
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 
 export const handleApi = async <T>(
   url: string,
   method: Methods,
-  data?: T
-): Promise<T> => {
-  if (
-    method !== "POST" &&
-    method !== "PUT" &&
-    method !== "DELETE" &&
-    method !== "GET"
-  ) {
+  data?: unknown
+): Promise<ApiResponse<T>> => {
+  if (!["POST", "PUT", "DELETE", "GET"].includes(method)) {
     throw new Error("Invalid method");
   }
 
@@ -43,7 +40,5 @@ export const handleApi = async <T>(
     throw new Error(error);
   }
 
-  const newData: T = await response.json();
-
-  return newData;
+  return await response.json();
 };

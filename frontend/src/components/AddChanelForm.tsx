@@ -32,9 +32,9 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
     onError: (error) => {
       errorToast(error.message);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       refetchChannels();
-      successToast("Channel added");
+      successToast(data.message);
       reset();
     },
   });

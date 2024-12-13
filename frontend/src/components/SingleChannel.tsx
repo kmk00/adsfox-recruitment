@@ -36,8 +36,8 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
           clientsCount: getValues("newClientsCount"),
         }
       ),
-    onSuccess: () => {
-      successToast("Channel updated");
+    onSuccess: (data) => {
+      successToast(data.message);
       refetchChannels();
       setIsEditing(false);
     },
@@ -49,8 +49,8 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
   const deleteMutation = useMutation({
     mutationFn: () =>
       handleApi(`${import.meta.env.VITE_API_URL}/channels/${id}`, "DELETE"),
-    onSuccess: () => {
-      successToast("Channel deleted");
+    onSuccess: (data) => {
+      successToast(data.message);
       refetchChannels();
     },
     onError: () => {

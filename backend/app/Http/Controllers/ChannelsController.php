@@ -41,7 +41,7 @@ class ChannelsController extends Controller
         $newChannel->clientsCount = $request->clientsCount;
         $newChannel->save();
         
-        return response()->json($newChannel);
+        return response()->json(['message' => 'Channel created successfully']);
 
     }
 
@@ -75,7 +75,7 @@ class ChannelsController extends Controller
         $channel->clientsCount = $request->clientsCount;
         $channel->save();
         
-        return response()->json($channel);
+        return response()->json(['message' => 'Channel updated successfully']);
     }
 
     /**
@@ -89,6 +89,6 @@ class ChannelsController extends Controller
         }
 
         $channel->delete();
-        return response()->json($channel);
+        return response()->json(['message' => 'Channel deleted successfully']);
     }
 }
