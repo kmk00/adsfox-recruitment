@@ -8,3 +8,8 @@ interface ChannelInfo extends Channel {
   createdAt: string;
   updatedAt: string;
 }
+
+interface ApiResponse<T> {
+  data?: T;
+  message: string;
+}

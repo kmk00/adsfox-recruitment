@@ -2,21 +2,26 @@ import SingleChannel from "./SingleChannel";
 
 interface Props {
   channelsData: ChannelInfo[];
+  refetchChannels: () => void;
 }
 
-const ChannelsList = ({ channelsData }: Props) => {
+const ChannelsList = ({ channelsData, refetchChannels }: Props) => {
   return (
     <table className="table text-center max-w-4xl mx-auto">
       <thead>
         <tr>
           <th>Name</th>
-          <th>Users</th>
-          <th>Actions</th>
+          <th>Clients Count</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         {channelsData.map((channel) => (
-          <SingleChannel key={channel.id} {...channel} />
+          <SingleChannel
+            refetchChannels={refetchChannels}
+            key={channel.id}
+            {...channel}
+          />
         ))}
       </tbody>
     </table>

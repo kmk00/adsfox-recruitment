@@ -1,27 +1,61 @@
+import { useMutation } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { errorToast, successToast } from "../utils/toasts";
+import { handleApi } from "../api/handleApi";
 
-interface Props {}
+interface Props {
+  refetchChannels: () => void;
+}
 
-const AddChanelForm = ({}: Props) => {
+const AddChanelForm = ({ refetchChannels }: Props) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
+    getValues,
   } = useForm<Channel>();
 
-  const onSubmit: SubmitHandler<Channel> = (data) => {
-    console.log(data);
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => {
+      const body = {
+        name: getValues("name"),
+        clientsCount: getValues("clientsCount"),
+      };
+
+      return handleApi<Channel>(
+        `${import.meta.env.VITE_API_URL}/channels`,
+        "POST",
+        body
+      );
+    },
+    onError: (error) => {
+      errorToast(error.message);
+    },
+    onSuccess: (data) => {
+      refetchChannels();
+      successToast(data.message);
+      reset();
+    },
+  });
+
+  const onSubmit: SubmitHandler<Channel> = async () => {
+    mutate();
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-2 my-4 max-w-80 mx-auto"
+      className="order-1 flex flex-col justify-center gap-2 my-4 max-w-80 mx-auto"
     >
       <label className="input input-bordered flex items-center gap-2">
         Name:
         <input
-          {...register("name", { required: true, maxLength: 30 })}
+          {...register("name", {
+            required: true,
+            maxLength: 30,
+            setValueAs: (v) => v.trim(),
+          })}
           name="name"
           type="text"
           className="grow"
@@ -50,7 +84,12 @@ const AddChanelForm = ({}: Props) => {
           Clients count field is required and must be greater or equal 0
         </span>
       )}
-      <input type="submit" className="btn btn-primary"></input>
+      <input
+        disabled={isPending}
+        type="submit"
+        className="btn btn-primary"
+        value="Add New Channel"
+      ></input>
     </form>
   );
 };

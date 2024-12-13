@@ -1,52 +1,44 @@
-import { useState } from "react";
 import AddChanelForm from "./AddChanelForm";
 import ChannelsChart from "./ChannelsChart";
 import ChannelsList from "./ChannelsList";
+import { useQuery } from "@tanstack/react-query";
+import { handleApi } from "../api/handleApi";
 
 const ChannelsSection = () => {
-  const [channels] = useState<ChannelInfo[]>([
-    {
-      id: 1,
-      name: "Channel 1",
-      clientsCount: 10,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 2,
-      name: "Channel 2",
-      clientsCount: 112,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 3,
-      name: "Channel 3",
-      clientsCount: 23,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 4,
-      name: "Channel 4",
-      clientsCount: 33,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-    {
-      id: 5,
-      name: "Channel 5",
-      clientsCount: 143,
-      createdAt: "2023-01-01",
-      updatedAt: "2023-01-01",
-    },
-  ]);
+  const { data, isLoading, error, refetch } = useQuery<ChannelInfo[]>({
+    queryKey: ["channels"],
+    queryFn: () => handleApi(`${import.meta.env.VITE_API_URL}/channels`, "GET"),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center gap-4">
+        <div className="w-4 h-4 bg-primary rounded-full animate-bounce" />
+        <p className="font-bold">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center font-bold">Error: {error.message}</div>;
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <div>
+        <h1 className="text-2xl text-center">No channels</h1>
+        <AddChanelForm refetchChannels={refetch} />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <ChannelsChart channelsData={channels} />
-      <AddChanelForm />
-      <ChannelsList channelsData={channels} />
+      <div className="grid grid-cols-1 md:grid-cols-2 ">
+        <AddChanelForm refetchChannels={refetch} />
+        <ChannelsChart channelsData={data} />
+      </div>
+      <ChannelsList refetchChannels={refetch} channelsData={data} />
     </div>
   );
 };
