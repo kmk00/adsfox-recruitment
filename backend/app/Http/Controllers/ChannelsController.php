@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Channels;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ChannelsController extends Controller
 {
@@ -33,7 +32,11 @@ class ChannelsController extends Controller
         ]);
 
         if (Channels::where('name', $request->name)->exists()) {
-            return response()->json(['error' => 'Channel already exists'], 400);
+            return response()->json(['error' => 'Channel with the same name already exists'], 400);
+        }
+
+        if ($request->clientsCount <= 0) {
+            return response()->json(['error' => 'clientsCount must be greater than 0'], 400);
         }
 
         $newChannel = new Channels();
@@ -55,11 +58,6 @@ class ChannelsController extends Controller
            'name' => 'required',
            'clientsCount' => 'required',
        ]);
-
-        // check if the updating channel exists
-        if (!$channel) {
-            return response()->json(['error' => 'Channel not found'], 404);
-        }
 
         // check if the different channel with the same name already exists
         if ( Channels::where('name', $request->name)->where('id', '!=', $channel->id)->exists()) {
