@@ -30,7 +30,7 @@ const ChannelsChart = ({ channelsData }: Props) => {
   }
 
   return (
-    <div>
+    <div data-testid="pie-chart">
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
