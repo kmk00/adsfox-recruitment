@@ -62,8 +62,13 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
           placeholder="e.g. Channel 1"
         />
       </label>
-      {errors.name && (
-        <span className="text-sm text-error">Name field is required</span>
+      {errors.name?.type === "required" && (
+        <span className="text-error text-sm">Name field is required</span>
+      )}
+      {errors.name?.type === "maxLength" && (
+        <span className="text-error text-sm">
+          Name field must be less than 30 characters
+        </span>
       )}
       <label className="input input-bordered flex items-center gap-2">
         Clients count:
@@ -79,9 +84,14 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
           placeholder="e.g. 5"
         />
       </label>
-      {errors.clientsCount && (
+      {errors.clientsCount?.type === "required" && (
         <span className="text-error text-sm">
-          Clients count field is required and must be greater or equal 0
+          Clients count field is required
+        </span>
+      )}
+      {errors.clientsCount?.type === "min" && (
+        <span className="text-error text-sm">
+          Clients count field must be greater or equal 0
         </span>
       )}
       <input
