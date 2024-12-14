@@ -5,9 +5,16 @@ import { useQuery } from "@tanstack/react-query";
 import { handleApi } from "../api/handleApi";
 
 const ChannelsSection = () => {
-  const { data, isLoading, error, refetch } = useQuery<ChannelInfo[]>({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["channels"],
-    queryFn: () => handleApi(`${import.meta.env.VITE_API_URL}/channels`, "GET"),
+    queryFn: async () => {
+      const data: unknown = await handleApi<ChannelInfo[]>(
+        `${import.meta.env.VITE_API_URL}/channels`,
+        "GET"
+      );
+
+      return data as ChannelInfo[];
+    },
   });
 
   if (isLoading) {

@@ -10,6 +10,6 @@ interface ChannelInfo extends Channel {
 }
 
 interface ApiResponse<T> {
-  data?: T;
+  data: T;
   message: string;
 }
