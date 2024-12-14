@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { getRandomColor } from "../../utils/getRandomColor";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import ChannelsChart from "../../components/ChannelsChart";
