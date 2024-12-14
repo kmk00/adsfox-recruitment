@@ -1,5 +1,3 @@
-import { ApiResponse } from "../types";
-
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 
 export const handleApi = async <T>(
