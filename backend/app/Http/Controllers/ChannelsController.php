@@ -14,10 +14,6 @@ class ChannelsController extends Controller
     {
         $channels = Channels::all();
 
-        if (!$channels) {
-            return response()->json(['error' => 'Channels not found'], 404);
-        }
-
         return response()->json($channels);
     }
 

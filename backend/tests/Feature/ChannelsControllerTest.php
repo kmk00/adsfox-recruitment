@@ -2,12 +2,11 @@
 
 
 use App\Models\Channels;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 describe('get request', function () {
-    
-    beforeEach(function(){
-        $this->artisan('migrate:refresh');
-    });
     
     test('return an empty array if there are no channels', function () {
         $response = $this->getJson('/api/channels');
@@ -32,10 +31,6 @@ describe('get request', function () {
 
 describe('post request', function () {
     
-    beforeEach(function(){
-        $this->artisan('migrate:refresh');
-    });
-
     test('create a new channel', function () {
         $channel = Channels::factory()->make();
         $response = $this->postJson('/api/channels', $channel->toArray());
@@ -85,10 +80,7 @@ describe('post request', function () {
 
 describe('delete request', function () {
 
-    beforeEach(function(){
-        $this->artisan('migrate:refresh');
-    });
-    
+
     test('delete existing channel', function () {
         $channel = Channels::factory()->create();
         $response = $this->deleteJson('/api/channels/' . $channel->id);
@@ -104,9 +96,7 @@ describe('delete request', function () {
 
 describe('put request', function () {
     
-    beforeEach(function(){
-        $this->artisan('migrate:refresh');
-    });
+
     
     test('update a channel', function () {
         $channel = Channels::factory()->create();
