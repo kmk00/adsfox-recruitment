@@ -13,22 +13,15 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
     handleSubmit,
     formState: { errors },
     reset,
-    getValues,
   } = useForm<Channel>();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: () => {
-      const body = {
-        name: getValues("name"),
-        clientsCount: getValues("clientsCount"),
-      };
-
-      return handleApi<Channel>(
+    mutationFn: (data: Channel) =>
+      handleApi<Channel>(
         `${import.meta.env.VITE_API_URL}/channels`,
         "POST",
-        body
-      );
-    },
+        data
+      ),
     onError: (error) => {
       errorToast(error.message);
     },
@@ -39,8 +32,8 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Channel> = async () => {
-    mutate();
+  const onSubmit: SubmitHandler<Channel> = (data) => {
+    mutate(data);
   };
 
   return (
@@ -52,44 +45,50 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
         Name:
         <input
           {...register("name", {
-            required: true,
-            maxLength: 30,
+            required: "Name field is required",
+            maxLength: {
+              value: 30,
+              message: "Name field must be less than 30 characters",
+            },
             setValueAs: (v) => v.trim(),
           })}
-          name="name"
           type="text"
           className="grow"
           placeholder="e.g. Channel 1"
         />
       </label>
       {errors.name && (
-        <span className="text-sm text-error">Name field is required</span>
+        <span className="text-error text-sm">{errors.name.message}</span>
       )}
+
       <label className="input input-bordered flex items-center gap-2">
         Clients count:
         <input
           {...register("clientsCount", {
-            required: true,
+            required: "Clients count field is required",
             valueAsNumber: true,
-            min: 0,
+            min: {
+              value: 0,
+              message: "Clients count field must be greater or equal 0",
+            },
           })}
           type="number"
-          name="clientsCount"
           className="grow"
           placeholder="e.g. 5"
         />
       </label>
       {errors.clientsCount && (
         <span className="text-error text-sm">
-          Clients count field is required and must be greater or equal 0
+          {errors.clientsCount.message}
         </span>
       )}
+
       <input
         disabled={isPending}
         type="submit"
         className="btn btn-primary"
         value="Add New Channel"
-      ></input>
+      />
     </form>
   );
 };

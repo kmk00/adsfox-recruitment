@@ -70,6 +70,10 @@ const SingleChannel = ({ refetchChannels, id, name, clientsCount }: Props) => {
       return errorToast("Name field is too long (30 symbols max)");
     }
 
+    if (!clientsCount) {
+      return errorToast("Valid clients count field is required");
+    }
+
     if (clientsCount < 0) {
       return errorToast("Valid clients count field is required");
     }
