@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChannelsSection from "../../components/ChannelsSection";
 import { handleApi } from "../../api/handleApi";
 
-// Mock the components once at the top level
 vi.mock("../../components/AddChanelForm", () => ({
   default: () => (
     <div data-testid="add-channel-form">Add Channel Form Mock</div>
@@ -19,7 +18,6 @@ vi.mock("../../components/ChannelsList", () => ({
   default: () => <div data-testid="channels-list">Channels List Mock</div>,
 }));
 
-// Mock the API module
 vi.mock("../../api/handleApi");
 
 vi.stubEnv("VITE_API_URL", "http://test-api");
@@ -48,7 +46,6 @@ describe("SingleChannel", () => {
   };
 
   it("should show loading state initially", () => {
-    // Mock for this specific test
     vi.mocked(handleApi).mockImplementation(() => new Promise(() => {}));
 
     renderComponent();
@@ -57,7 +54,6 @@ describe("SingleChannel", () => {
   });
 
   it("should render components after data is fetched", async () => {
-    // Mock for this specific test
     vi.mocked(handleApi).mockResolvedValue({
       data: [
         { id: 1, name: "Channel 1", clientsCount: 10 },
@@ -76,7 +72,6 @@ describe("SingleChannel", () => {
   });
 
   it("should render error message when data fetching fails", async () => {
-    // Mock for this specific test
     vi.mocked(handleApi).mockRejectedValue(new Error("API Error"));
 
     renderComponent();
