@@ -7,7 +7,7 @@ interface Props {
 
 const ChannelsList = ({ channelsData, refetchChannels }: Props) => {
   return (
-    <table className="table text-center max-w-4xl mx-auto">
+    <table className="table text-center  mx-auto">
       <thead>
         <tr>
           <th>Name</th>
