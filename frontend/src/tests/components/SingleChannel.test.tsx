@@ -27,6 +27,7 @@ describe("SingleChannel", () => {
   });
 
   const renderComponent = () => {
+    // Render the part of the table to prevent the error:
     // Warning: validateDOMNesting(...): <tr> cannot appear as a child of <div>.
     // at tr
     // at SingleChannel (\frontend\src\components\SingleChannel.tsx:13:26)
