@@ -41,7 +41,7 @@ const ChannelsSection = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 ">
         <AddChanelForm refetchChannels={refetch} />
         <ChannelsChart channelsData={data} />
       </div>

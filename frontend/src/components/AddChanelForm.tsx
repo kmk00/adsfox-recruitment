@@ -39,7 +39,7 @@ const AddChanelForm = ({ refetchChannels }: Props) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="order-1 flex flex-col justify-center gap-2 my-4 max-w-80 mx-auto"
+      className="lg:order-1 flex flex-col justify-center gap-2 my-4 max-w-80 mx-auto"
     >
       <label className="input input-bordered flex items-center gap-2">
         Name:
